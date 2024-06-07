@@ -10,8 +10,15 @@
       if (type === "NEW") {
         currentProduct = productSKU;
         console.log("Content script: Received message from background script.");
-        newProductLoaded();
-          // newVideoLoaded();
+
+        // Check if the DOM is already loaded
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            // Safe to perform DOM operations
+            newProductLoaded();
+        } else {
+            // Wait for the DOM to be loaded
+            document.addEventListener('DOMContentLoaded', newProductLoaded);
+        }
       }
   });
 
@@ -19,7 +26,7 @@
   'Amphetamines', 'Sodium benzoate', 'Benzophenone', 'Octinoxate', 'Paraffin Oil', 'acrylamide', 
   'retinyl palmitate', 'Pyridine', 'hydrogenated cotton seed oil', 'Progestins', 'Urea', 
   'Polyethylene Glycol', 'Formaldehyde', 'Butylated hydroxyanisole', 'butylated hydroxytoluene', 
-  'Potassium bromate', 'Propyl gallate', 'Lead' ];
+  'Potassium bromate', 'Propyl gallate', 'Lead', 'Retinol' ];
 
   function containsHarmfulIngredients(harmfulIngredients, currentIngredients) {
     // Check if any harmful ingredient is present in the current ingredients
@@ -28,7 +35,7 @@
 
 function getIngredients(currentDiv) {
     // Try to find the second last p tag in the grandchild div
-    var secondLastPTag = currentDiv.querySelector('div > div p:nth-last-child(2)');
+    var secondLastPTag = currentDiv.querySelector('div > div p:nth-last-child(1)');
 
     if (secondLastPTag) {
         // If the p tag exists, return its content
@@ -75,18 +82,20 @@ function getIngredients(currentDiv) {
     // Style the modal
     modal.style.position = 'fixed';
     modal.style.zIndex = '1000';
-    modal.style.left = '0';
-    modal.style.top = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
+    modal.style.right = '100px';
+    modal.style.top = '250px';
+    modal.style.color = 'white';
+    modal.style.borderRadius = '10px';
     modal.style.overflow = 'auto';
     modal.style.backgroundColor = 'rgba(0,0,0,0.4)'; // Black background with opacity
 
-    modalContent.style.margin = '15% auto';
+    modalContent.style.margin = '0px';
+    modalContent.style.borderRadius = '10px';
     modalContent.style.padding = '20px';
     modalContent.style.border = '1px solid #888';
-    modalContent.style.width = '80%'; // Could be less or more depending on the design
-    modalContent.style.backgroundColor = '#fefefe';
+    modalContent.style.width = '100%'; // Could be less or more depending on the design
+    modalContent.style.height = '100%'; // Could be less or more depending on the design
+    modalContent.style.backgroundColor = isHarmful ? 'red' : 'green';
 
     // Close button
     closeBtn.textContent = '×';
@@ -95,12 +104,6 @@ function getIngredients(currentDiv) {
     closeBtn.style.fontSize = '28px';
     closeBtn.style.fontWeight = 'bold';
     closeBtn.style.cursor = 'pointer';
-
-    // Close the modal when the close button is clicked
-    closeBtn.onclick = function() {
-        modal.style.display = 'none';
-        document.body.removeChild(modal);
-    };
 
     // Message content
     message.textContent = isHarmful ? 'This product contains harmful ingredients.' : 'This product does not contain harmful ingredients.';
@@ -112,6 +115,35 @@ function getIngredients(currentDiv) {
     modalContent.appendChild(message);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
+
+    // Handle close button click
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+        document.body.removeChild(modal);
+        taroImage.style.display = 'block'; // Show the taro image after closing the modal
+    };
+
+    // Create and style the taro image
+    const taroImage = document.createElement('img');
+    taroImage.src = chrome.runtime.getURL("taro_image.png");
+    taroImage.style.position = 'fixed';
+    taroImage.style.bottom = '10px';
+    taroImage.style.right = '10px';
+    taroImage.style.width = '100px';  // Adjust size as needed
+    taroImage.style.height = '100px';  // Adjust size as needed
+    taroImage.style.cursor = 'pointer';
+    taroImage.style.zIndex = '1000';
+    taroImage.style.borderRadius = '50%';
+    taroImage.style.border = '5px solid #9C27B0';
+    taroImage.style.display = 'none'; // Initially hidden
+    document.body.appendChild(taroImage);
+
+    // Reopen modal when the taro image is clicked
+    taroImage.onclick = function() {
+        document.body.appendChild(modal);
+        modal.style.display = 'block';
+        taroImage.style.display = 'none'; // Hide the image when modal is open
+    };
 }
 
 
