@@ -1,8 +1,9 @@
 body {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0;
+  padding: 20px;
 }
