@@ -27,48 +27,30 @@
   'retinyl palmitate', 'Pyridine', 'hydrogenated cotton seed oil', 'Progestins', 'Urea', 
   'Polyethylene Glycol', 'Formaldehyde', 'Butylated hydroxyanisole', 'butylated hydroxytoluene', 
   'Potassium bromate', 'Propyl gallate', 'Lead', 'Retinol', 'Salicylic acid', 'Botox', 'homosalate', 'octocrylene', 'octinoxate', 'Accutane', 
-  'Benzoyl peroxide', 'Sodium Lauryl Sulphate', 'Triclosan', 'Dihydroxyacetone', 
-  'Phenoxyethanol', 'Cocamidopropyl betaine', 'Dimethicone', 'Homosalate', 'Homomenthyl salicylate', 
+  'Benzoyl peroxide', 'Cocamidopropyl betaine', 'Dimethicone', 'Homosalate', 'Homomenthyl salicylate', 
   '3,3,5-trimethyl-cyclohexyl-salicylate' ];
 
   function containsHarmfulIngredients(harmfulIngredients, currentIngredients) {
+    // Convert both arrays to lower case for case-insensitive comparison
+    const harmfulIngredientsLower = harmfulIngredients.map(ingredient => ingredient.toLowerCase());
+    const currentIngredientsLower = currentIngredients.map(ingredient => ingredient.toLowerCase());
+
     // Check if any harmful ingredient is present in the current ingredients
-    return harmfulIngredients.some(ingredient => currentIngredients.includes(ingredient));
-}
-
-function getIngredients(currentDiv) {
-    // Try to find the second last p tag in the grandchild div
-    var secondLastPTag = currentDiv ? currentDiv.querySelector('div > div p:nth-last-child(1)') : null;
-
-    if (secondLastPTag) {
-        // If the p tag exists, return its content
-        return secondLastPTag.textContent;
-    } else {
-        // If the p tag does not exist, find the content after the third <br> tag
-        var grandchildDiv = currentDiv.querySelector('div > div');
-        var brTags = grandchildDiv.querySelectorAll('br');
-
-        if (brTags.length >= 4 && brTags[3].nextSibling) {
-            // If there is at least a third <br> tag, return the text immediately following it
-            return brTags[2].nextSibling.nodeValue || 'No text following the third <br> tag.';
-        }
-    }
-
-    // Return a default message or empty string if no content is found
-    return 'No relevant content found.';
+    return harmfulIngredientsLower.some(ingredient => currentIngredientsLower.includes(ingredient));
 }
 
   const newProductLoaded = () => { 
 
     const currentDiv = document.getElementById("ingredients");
-    var secondLastPTag = currentDiv.querySelector('div > div p:nth-last-child(2)');
+    var ingredientsDiv = currentDiv.textContent;   
+    // const ingredientsText = ingredientsDiv.split(':')[1].trim();
 
-    var ingredients = getIngredients(currentDiv);
-   
+    // Split into an array by commas and trim any extra spaces
+    const ingredientsArray = ingredientsDiv.split(',').map(ingredient => ingredient.trim());
 
     
-    console.log(ingredients);
-    var isHarmful = containsHarmfulIngredients(harmfulIngredients, ingredients);
+    console.log(ingredientsArray);
+    var isHarmful = containsHarmfulIngredients(harmfulIngredients, ingredientsArray);
 
     console.log("Current product harmfulness status: " + isHarmful);
     showModal(isHarmful);
@@ -78,11 +60,15 @@ function getIngredients(currentDiv) {
   function showModal(isHarmful) {
 
      // Check if there's already a modal present and remove it
-    const existingModal = document.querySelector('.taro-modal');
-    if (existingModal) {
-        existingModal.remove();
-    }
+     var existingModal = document.querySelector('.taro-modal');
+     if (existingModal) {
+         existingModal.remove();
+     }
 
+     var existingTaroImage = document.querySelector('.taro-image');
+    if (existingTaroImage) {
+        existingTaroImage.remove();
+    }
     // Remove existing taro image if present
     // const existingTaroImage = document.querySelector('.taro-image');
     // if (existingTaroImage) {
@@ -92,6 +78,8 @@ function getIngredients(currentDiv) {
 
     // Create the modal elements
     const modal = document.createElement('div');
+    modal.className = 'taro-modal';  // Add class for easier future reference
+
     const modalContent = document.createElement('div');
     const closeBtn = document.createElement('span');
     const message = document.createElement('p');
@@ -100,8 +88,8 @@ function getIngredients(currentDiv) {
     modal.style.position = 'fixed';
     modal.style.width = '300px';
     modal.style.zIndex = '1000';
-    modal.style.right = '100px';
-    modal.style.top = '250px';
+    modal.style.right = '50px';
+    modal.style.top = '300px';
     modal.style.color = 'white';
     modal.style.borderRadius = '10px';
     modal.style.overflow = 'auto';
@@ -170,40 +158,6 @@ function getIngredients(currentDiv) {
         taroImage.style.display = 'none'; // Hide the image when modal is open
     };
 }
-
-
-  const newVideoLoaded = () => {
-    console.log("Content script: New video loaded.");
-    //   const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
-    //   console.log(bookmarkBtnExists);
-
-    //   if (!bookmarkBtnExists) {
-    //       const bookmarkBtn = document.createElement("img");
-
-    //       bookmarkBtn.src = chrome.runtime.getURL("assets/bookmark.png");
-    //       bookmarkBtn.className = "ytp-button " + "bookmark-btn";
-    //       bookmarkBtn.title = "Click to bookmark current timestamp";
-
-    //       youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
-    //       youtubePlayer = document.getElementsByClassName("video-stream")[0];
-          
-    //       youtubeLeftControls.append(bookmarkBtn);
-    //       bookmarkBtn.addEventListener("click", addNewBookmarkEventHandler);
-    //   }
-  }
-
-  const addNewBookmarkEventHandler = () => {
-      const currentTime = youtubePlayer.currentTime;
-      const newBookmark = {
-          time: currentTime,
-          desc: "Bookmark at " + getTime(currentTime),
-      };
-      console.log(newBookmark);
-
-      chrome.storage.sync.set({
-          [currentVideo]: JSON.stringify([...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time))
-      });
-  }
 
   newProductLoaded();
 })();
