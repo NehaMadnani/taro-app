@@ -26,7 +26,10 @@
   'Amphetamines', 'Sodium benzoate', 'Benzophenone', 'Octinoxate', 'Paraffin Oil', 'acrylamide', 
   'retinyl palmitate', 'Pyridine', 'hydrogenated cotton seed oil', 'Progestins', 'Urea', 
   'Polyethylene Glycol', 'Formaldehyde', 'Butylated hydroxyanisole', 'butylated hydroxytoluene', 
-  'Potassium bromate', 'Propyl gallate', 'Lead', 'Retinol' ];
+  'Potassium bromate', 'Propyl gallate', 'Lead', 'Retinol', 'Salicylic acid', 'Botox', 'homosalate', 'octocrylene', 'octinoxate', 'Accutane', 
+  'Benzoyl peroxide', 'Sodium Lauryl Sulphate', 'Triclosan', 'Dihydroxyacetone', 
+  'Phenoxyethanol', 'Cocamidopropyl betaine', 'Dimethicone', 'Homosalate', 'Homomenthyl salicylate', 
+  '3,3,5-trimethyl-cyclohexyl-salicylate' ];
 
   function containsHarmfulIngredients(harmfulIngredients, currentIngredients) {
     // Check if any harmful ingredient is present in the current ingredients
@@ -35,7 +38,7 @@
 
 function getIngredients(currentDiv) {
     // Try to find the second last p tag in the grandchild div
-    var secondLastPTag = currentDiv.querySelector('div > div p:nth-last-child(1)');
+    var secondLastPTag = currentDiv ? currentDiv.querySelector('div > div p:nth-last-child(1)') : null;
 
     if (secondLastPTag) {
         // If the p tag exists, return its content
@@ -73,6 +76,20 @@ function getIngredients(currentDiv) {
   }
 
   function showModal(isHarmful) {
+
+     // Check if there's already a modal present and remove it
+    const existingModal = document.querySelector('.taro-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    // Remove existing taro image if present
+    // const existingTaroImage = document.querySelector('.taro-image');
+    // if (existingTaroImage) {
+    //     existingTaroImage.remove();
+    //     document.body.removeChild(existingTaroImage)
+    // }
+
     // Create the modal elements
     const modal = document.createElement('div');
     const modalContent = document.createElement('div');
@@ -81,6 +98,7 @@ function getIngredients(currentDiv) {
 
     // Style the modal
     modal.style.position = 'fixed';
+    modal.style.width = '300px';
     modal.style.zIndex = '1000';
     modal.style.right = '100px';
     modal.style.top = '250px';
@@ -88,6 +106,7 @@ function getIngredients(currentDiv) {
     modal.style.borderRadius = '10px';
     modal.style.overflow = 'auto';
     modal.style.backgroundColor = 'rgba(0,0,0,0.4)'; // Black background with opacity
+    
 
     modalContent.style.margin = '0px';
     modalContent.style.borderRadius = '10px';
@@ -95,7 +114,10 @@ function getIngredients(currentDiv) {
     modalContent.style.border = '1px solid #888';
     modalContent.style.width = '100%'; // Could be less or more depending on the design
     modalContent.style.height = '100%'; // Could be less or more depending on the design
-    modalContent.style.backgroundColor = isHarmful ? 'red' : 'green';
+    modalContent.style.backgroundColor = isHarmful ? '#fddcde' : '#d3f0e4';
+    modalContent.style.border = isHarmful ? '1px solid #fdcbce' : '1px solid #bde8d7';
+    modalContent.style.color = isHarmful ? '#f44336' : '#4CAF50';
+    modalContent.style.fontWeight = 'bold';
 
     // Close button
     closeBtn.textContent = '×';
@@ -104,6 +126,8 @@ function getIngredients(currentDiv) {
     closeBtn.style.fontSize = '28px';
     closeBtn.style.fontWeight = 'bold';
     closeBtn.style.cursor = 'pointer';
+    closeBtn.style.marginTop = '-20px';
+    closeBtn.style.marginRight = '-15px';
 
     // Message content
     message.textContent = isHarmful ? 'This product contains harmful ingredients.' : 'This product does not contain harmful ingredients.';
@@ -125,6 +149,7 @@ function getIngredients(currentDiv) {
 
     // Create and style the taro image
     const taroImage = document.createElement('img');
+    taroImage.className = 'taro-image';
     taroImage.src = chrome.runtime.getURL("taro_image.png");
     taroImage.style.position = 'fixed';
     taroImage.style.bottom = '10px';
