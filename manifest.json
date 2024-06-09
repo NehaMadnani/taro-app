@@ -2,7 +2,7 @@
   "name": "TARO - Harmful Ingredients Checker",
   "version": "1.0",
   "description": "Identify harmful chemicals in consumables and cosmetics for pregnant women",
-  "permissions": ["storage", "tabs"],
+  "permissions": ["tabs"],
   "host_permissions": ["https://*.sephora.com/*"],
   "background": {
     "service_worker": "background.js"

@@ -23,7 +23,7 @@
   });
 
   const harmfulIngredients = [ 'Retinoids', 'Retinols', 'Hydroquinon', 'Retin A', 'aluminium chloride', 'phthalates', 
-  'Amphetamines', 'Sodium benzoate', 'Benzophenone', 'Octinoxate', 'Paraffin Oil', 'acrylamide', 
+  'Amphetamines', 'Benzophenone', 'Octinoxate', 'Paraffin Oil', 'acrylamide', 
   'retinyl palmitate', 'Pyridine', 'hydrogenated cotton seed oil', 'Progestins', 'Urea', 
   'Polyethylene Glycol', 'Formaldehyde', 'Butylated hydroxyanisole', 'butylated hydroxytoluene', 
   'Potassium bromate', 'Propyl gallate', 'Lead', 'Retinol', 'Salicylic acid', 'Botox', 'homosalate', 'octocrylene', 'octinoxate', 'Accutane', 
@@ -41,9 +41,19 @@
 
   const newProductLoaded = () => { 
 
+    var existingModal = document.querySelector('.taro-modal');
+    if (existingModal) {
+       document.body.removeChild(existingModal);
+       existingModal.remove();
+    }
+
+    var existingTaroImage = document.querySelector('.taro-image');
+   if (existingTaroImage) {
+       document.body.removeChild(existingTaroImage);
+       existingTaroImage.remove();
+   }
     const currentDiv = document.getElementById("ingredients");
-    var ingredientsDiv = currentDiv.textContent;   
-    // const ingredientsText = ingredientsDiv.split(':')[1].trim();
+    var ingredientsDiv = currentDiv ? currentDiv.textContent: "";   
 
     // Split into an array by commas and trim any extra spaces
     const ingredientsArray = ingredientsDiv.split(',').map(ingredient => ingredient.trim());
@@ -59,22 +69,11 @@
 
   function showModal(isHarmful) {
 
-     // Check if there's already a modal present and remove it
-     var existingModal = document.querySelector('.taro-modal');
-     if (existingModal) {
-         existingModal.remove();
-     }
-
-     var existingTaroImage = document.querySelector('.taro-image');
+    const existingTaroImage = document.querySelector('.taro-image');
     if (existingTaroImage) {
         existingTaroImage.remove();
+        document.body.removeChild(existingTaroImage)
     }
-    // Remove existing taro image if present
-    // const existingTaroImage = document.querySelector('.taro-image');
-    // if (existingTaroImage) {
-    //     existingTaroImage.remove();
-    //     document.body.removeChild(existingTaroImage)
-    // }
 
     // Create the modal elements
     const modal = document.createElement('div');
