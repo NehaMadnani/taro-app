@@ -3,22 +3,27 @@
   "version": "1.1",
   "description": "Identify harmful chemicals in consumables and cosmetics for pregnant women",
   "permissions": ["tabs", "webRequest"],
-  "host_permissions": ["https://*.sephora.com/*"],
+  "host_permissions": [
+    "https://*.sephora.com/*",
+    "https://*.target.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
       "matches": ["https://*.sephora.com/*"],
-      "js": ["harmfulIngredients.js", "content.js"]
+      "js": ["harmfulIngredients.js","content_sephora.js"]
+    },
+    {
+      "matches": ["https://*.target.com/*"],
+      "js": ["harmfulIngredients.js", "content_target.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "taro_image.png"
-      ],
-      "matches": ["https://*.sephora.com/*"]
+      "resources": ["taro_image.png", "harmfulIngredients.js"],
+      "matches": ["https://*.sephora.com/*", "https://*.target.com/*"]
     }
   ],
   "action": {

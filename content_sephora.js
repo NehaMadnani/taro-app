@@ -12,7 +12,7 @@ function clearProcessedUrls() {
 // Listen for messages from the background script
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   console.log('Message received in content script:', message);
-  if (message.type === "interceptedProductAPI" && !processedUrls.has(message.url)) {
+  if (message.type === "interceptedProductAPI" && message.site === "sephora" && !processedUrls.has(message.url)) {
     processedUrls.add(message.url);
     fetchProductDetails(message.url);
   }
@@ -39,7 +39,7 @@ async function fetchProductDetails(url) {
       // The earlier paragraphs typically contain the highlighted ingredients
       const highlightedIngredients = paragraphs.slice(0, -1).map(p => p.replace(/^-/, '').trim());
       
-      const foundHarmfulIngredients = harmfulIngredients.filter(ingredient => 
+      const foundHarmfulIngredients = window.harmfulIngredients.filter(ingredient => 
         fullIngredientList.toLowerCase().includes(ingredient.toLowerCase())
       );
       
@@ -183,3 +183,10 @@ new MutationObserver(() => {
 
 // Initial call to clear the cache when the script loads
 clearProcessedUrls();
+
+
+// for target 
+
+// url pattern - https://redsky.target.com/redsky_aggregations/v1/web/pdp_client_v1
+
+// response - data.product.children[0].enrichment.nutrition_facts.ingredients
