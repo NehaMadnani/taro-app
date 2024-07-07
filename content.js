@@ -46,8 +46,10 @@ async function fetchProductDetails(url) {
       if (foundHarmfulIngredients.length > 0) {
         console.log('This product contains the following harmful ingredients:', foundHarmfulIngredients.join(', '));
         console.log('These ingredients are considered harmful.');
+        showModal(true);
       } else {
         console.log('This product does not contain any of the listed harmful ingredients. It\'s good!');
+        showModal(false);
       }
       
       console.log('Highlighted Ingredients:', highlightedIngredients);
@@ -60,6 +62,103 @@ async function fetchProductDetails(url) {
   }
 }
 
+
+
+function showModal(isHarmful) {
+
+  const existingModal = document.querySelector('.taro-modal');
+  if (existingModal) {
+    document.body.removeChild(existingModal);
+  }
+
+  const existingTaroImage = document.querySelector('.taro-image');
+  if (existingTaroImage) {
+    document.body.removeChild(existingTaroImage);
+  }
+
+  // Create the modal elements
+  const modal = document.createElement('div');
+  modal.className = 'taro-modal';  // Add class for easier future reference
+
+  const modalContent = document.createElement('div');
+  const closeBtn = document.createElement('span');
+  const message = document.createElement('p');
+
+  // Style the modal
+  modal.style.position = 'fixed';
+  modal.style.width = '300px';
+  modal.style.zIndex = '1000';
+  modal.style.right = '50px';
+  modal.style.top = '300px';
+  modal.style.color = 'white';
+  modal.style.borderRadius = '10px';
+  modal.style.overflow = 'auto';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.4)'; // Black background with opacity
+  
+
+  modalContent.style.margin = '0px';
+  modalContent.style.borderRadius = '10px';
+  modalContent.style.padding = '20px';
+  modalContent.style.border = '1px solid #888';
+  modalContent.style.width = '100%'; // Could be less or more depending on the design
+  modalContent.style.height = '100%'; // Could be less or more depending on the design
+  modalContent.style.backgroundColor = isHarmful ? '#fddcde' : '#d3f0e4';
+  modalContent.style.border = isHarmful ? '1px solid #fdcbce' : '1px solid #bde8d7';
+  modalContent.style.color = isHarmful ? '#f44336' : '#4CAF50';
+  modalContent.style.fontWeight = 'bold';
+
+  // Close button
+  closeBtn.textContent = '×';
+  closeBtn.style.color = '#aaa';
+  closeBtn.style.float = 'right';
+  closeBtn.style.fontSize = '28px';
+  closeBtn.style.fontWeight = 'bold';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.marginTop = '-20px';
+  closeBtn.style.marginRight = '-15px';
+
+  // Message content
+  message.textContent = isHarmful ? 'This product contains harmful ingredients.' : 'This product does not contain harmful ingredients.';
+  message.style.textAlign = 'center';
+  message.style.fontSize = '16px';
+
+  // Append elements
+  modalContent.appendChild(closeBtn);
+  modalContent.appendChild(message);
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+
+  // Handle close button click
+  closeBtn.onclick = function() {
+      modal.style.display = 'none';
+      document.body.removeChild(modal);
+      taroImage.style.display = 'block'; // Show the taro image after closing the modal
+  };
+
+  // Create and style the taro image
+  const taroImage = document.createElement('img');
+  taroImage.className = 'taro-image';
+  taroImage.src = chrome.runtime.getURL("taro_image.png");
+  taroImage.style.position = 'fixed';
+  taroImage.style.bottom = '10px';
+  taroImage.style.right = '10px';
+  taroImage.style.width = '100px';  // Adjust size as needed
+  taroImage.style.height = '100px';  // Adjust size as needed
+  taroImage.style.cursor = 'pointer';
+  taroImage.style.zIndex = '1000';
+  taroImage.style.borderRadius = '50%';
+  taroImage.style.border = '5px solid #9C27B0';
+  taroImage.style.display = 'none'; // Initially hidden
+  document.body.appendChild(taroImage);
+
+  // Reopen modal when the taro image is clicked
+  taroImage.onclick = function() {
+      document.body.appendChild(modal);
+      modal.style.display = 'block';
+      taroImage.style.display = 'none'; // Hide the image when modal is open
+  };
+}
+
 // Clear the cache when the page is about to unload (refresh or navigation)
 window.addEventListener('beforeunload', clearProcessedUrls);
 
@@ -70,6 +169,15 @@ new MutationObserver(() => {
   if (url !== lastUrl) {
     lastUrl = url;
     clearProcessedUrls();
+
+    const existingModal = document.querySelector('.taro-modal');
+    if (existingModal) {
+      document.body.removeChild(existingModal);
+    }
+    const existingTaroImage = document.querySelector('.taro-image');
+    if (existingTaroImage) {
+      document.body.removeChild(existingTaroImage);
+    }
   }
 }).observe(document, {subtree: true, childList: true});
 
