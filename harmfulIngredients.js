@@ -1,4 +1,4 @@
-const harmfulIngredients = [
+window.harmfulIngredients = [
     'Retinoids', 'Retinols', 'Hydroquinon', 'Retin A', 'aluminium chloride', 'phthalates',
     'Amphetamines', 'Benzophenone', 'Octinoxate', 'Paraffin Oil', 'acrylamide',
     'retinyl palmitate', 'Pyridine', 'hydrogenated cotton seed oil', 'Progestins', 'Urea',
