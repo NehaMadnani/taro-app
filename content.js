@@ -103,7 +103,7 @@ function showModal(isHarmful) {
   modalContent.style.width = '100%'; // Could be less or more depending on the design
   modalContent.style.height = '100%'; // Could be less or more depending on the design
   modalContent.style.backgroundColor = isHarmful ? '#fddcde' : '#d3f0e4';
-  modalContent.style.border = isHarmful ? '1px solid #fdcbce' : '1px solid #bde8d7';
+  modalContent.style.border = isHarmful ? '1px solid #f44336' : '1px solid #4CAF50';
   modalContent.style.color = isHarmful ? '#f44336' : '#4CAF50';
   modalContent.style.fontWeight = 'bold';
 
